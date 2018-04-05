@@ -1,4 +1,4 @@
-package com.example.movieservice;
+package com.example.testservice;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,12 +15,11 @@ import java.time.Duration;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class FluxFlixServiceTest {
+public class TestServiceApplicationTests {
 
 		private WebTestClient webTestClient;
 
-		@Autowired
-		private FluxFlixService fluxFlixService;
+		private PublisherService publisherService = new PublisherService();
 
 		@Autowired
 		private ApplicationContext applicationContext;
@@ -35,23 +34,25 @@ public class FluxFlixServiceTest {
 		}
 
 		@Test
-		public void getMoviesReturnsOk() {
+		public void getGreeting() throws Exception {
 				this.webTestClient
 					.get()
-					.uri("/movies")
+					.uri("/hi")
 					.exchange()
-					.expectStatus()
-					.isOk();
+					.expectStatus().isOk();
 		}
 
 		@Test
-		public void eventsTake10() {
-				Movie movie = this.fluxFlixService.all().blockFirst();
-				StepVerifier.withVirtualTime(() -> this.fluxFlixService.events(movie.getId())
+		public void contextLoaded() throws Exception {
+
+
+				StepVerifier.withVirtualTime(() -> this.publisherService.publish()
 					.take(10)
-					.collectList())
-					.thenAwait(Duration.ofHours(1))
-					.consumeNextWith(list -> Assert.assertEquals(10, list.size()))
+					.collectList()
+				)
+					.thenAwait(Duration.ofHours(10))
+					.consumeNextWith(list -> Assert.assertEquals(list.size(), 10))
 					.verifyComplete();
 		}
+
 }
