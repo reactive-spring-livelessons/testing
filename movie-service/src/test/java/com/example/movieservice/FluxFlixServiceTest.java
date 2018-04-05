@@ -26,7 +26,7 @@ public class FluxFlixServiceTest {
                         .take(10)
                         .collectList())
                 .thenAwait(Duration.ofHours(1))
-                .consumeNextWith(list -> Assert.assertTrue(list.size() == 10))
+                .consumeNextWith(list -> Assert.assertEquals(10, list.size()))
                 .verifyComplete();
     }
 }
